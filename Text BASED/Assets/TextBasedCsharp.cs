@@ -2,46 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// A node-based interactive text adventure game set in a drag competition theme.
-/// Each player choice moves the story to a new node and modifies the player's "Slaytion" score.
-/// </summary>
+
 public class TextBasedCsharp : MonoBehaviour
 {
-    /// <summary>
-    /// Represents a single story node.
-    /// Each node has a unique ID, descriptive text, a Slaytion score change,
-    /// and a list of edges (choices) leading to other nodes.
-    /// </summary>
+   
     public class StoryNode
     {
-        /// <summary>
-        /// Unique identifier for this story node.
-        /// </summary>
+        // Unique identifier for this story node
         public string id;
-
-        /// <summary>
-        /// The text description or dialogue displayed when this node is reached.
-        /// </summary>
+        
+        // The text description or dialogue displayed when this node is reached.
         public string text;
-
-        /// <summary>
-        /// The amount by which this node changes the player's Slaytion score.
-        /// Positive = good (slaying), negative = bad (flopping).
-        /// </summary>
+        
+        // The amount by which this node changes the player's Slaytion score.
+        // Positive = good (slaying), negative = bad (flopping).
         public int slayChange;
-
-        /// <summary>
-        /// A list of edges (player choices) connecting this node to other nodes.
-        /// </summary>
+        
+        // A list of edges (player choices) connecting this node to other nodes.
         public List<Edge> edges = new List<Edge>();
-
-        /// <summary>
-        /// Constructor for creating a story node.
-        /// </summary>
-        /// <param name="id">Unique node name.</param>
-        /// <param name="text">Description or message displayed to the player.</param>
-        /// <param name="slayChange">Change in Slaytion score (default is 0).</param>
+        
         public StoryNode(string id, string text, int slayChange = 0)
         {
             this.id = id;
@@ -49,63 +28,36 @@ public class TextBasedCsharp : MonoBehaviour
             this.slayChange = slayChange;
         }
     }
-
-    /// <summary>
-    /// Represents a directional connection between two nodes.
-    /// Each edge stores a choice description and the next story node to travel to.
-    /// </summary>
+    
     public class Edge
     {
-        /// <summary>
-        /// Text that describes the player's choice (displayed as an option).
-        /// </summary>
+       
         public string choiceText;
-
-        /// <summary>
-        /// The next story node reached when this choice is selected.
-        /// </summary>
+        
         public StoryNode nextNode;
 
-        /// <summary>
-        /// Constructor for creating an edge.
-        /// </summary>
-        /// <param name="choiceText">The player's decision text.</param>
-        /// <param name="nextNode">The story node that this choice leads to.</param>
         public Edge(string choiceText, StoryNode nextNode)
         {
             this.choiceText = choiceText;
             this.nextNode = nextNode;
         }
     }
+    
+    //Stores all story nodes using their IDs as keys.
 
-    /// <summary>
-    /// Stores all story nodes using their IDs as keys.
-    /// Acts as a graph connecting all possible story paths.
-    /// </summary>
     private Dictionary<string, StoryNode> graph = new Dictionary<string, StoryNode>();
-
-    /// <summary>
-    /// The node that the player is currently at in the story.
-    /// </summary>
+    
+    // The node that the player is currently at in the story.
     private StoryNode currentNode;
-
-    /// <summary>
-    /// The player's current Slaytion score, reflecting their performance and choices.
-    /// </summary>
+    
+    // The player's current Slaytion score
     private int slaytion = 0;
-
-    /// <summary>
-    /// Tracks whether the game has ended to prevent further input.
-    /// </summary>
+    
+    // Tracks whether the game has ended to prevent further input.
     private bool gameOver = false;
-
-    /// <summary>
-    /// Initializes the story structure by creating nodes, connecting them,
-    /// and displaying the starting node.
-    /// </summary>
+    
     void Start()
     {
-        // === Create story nodes ===
         var start = new StoryNode("start",
             "Hey Queen, Welcome to the stage of Queen of the World! " +
             "Slay the crown and send them bitches packing. But remember, your choices will take you closer or further from the crown. Let the race begin!!!.");
@@ -157,8 +109,7 @@ public class TextBasedCsharp : MonoBehaviour
 
         finalchallange.edges.Add(new Edge("Take your wig off — My Anaconda Don't.", end1));
         finalchallange.edges.Add(new Edge("Start twerking on judges’ table.", end2));
-
-        // === Add to graph ===
+        
         graph[start.id] = start;
         graph[left.id] = left;
         graph[right.id] = right;
@@ -169,30 +120,26 @@ public class TextBasedCsharp : MonoBehaviour
         graph[finalchallange.id] = finalchallange;
         graph[end1.id] = end1;
         graph[end2.id] = end2;
-
-        // === Start story ===
+        
         currentNode = start;
         DisplayNode();
     }
-
-    /// <summary>
-    /// Displays the current node's text, Slaytion score changes,
-    /// and available choices to the Unity Console.
-    /// </summary>
+    
+    // Displays the current node's text, Slaytion score changes,
     void DisplayNode()
     {
-        Debug.Log($"💄 {currentNode.text}");
+        Debug.Log($" {currentNode.text}");
         slaytion += currentNode.slayChange;
 
         if (currentNode.edges.Count == 0)
         {
-            Debug.Log($"👑 FINAL SLAYTION SCORE: {slaytion}");
-            Debug.Log("💅 Thanks for playing Queen!");
+            Debug.Log($" FINAL SLAYTION SCORE: {slaytion}");
+            Debug.Log(" Thanks for playing Queen!");
             gameOver = true;
             return;
         }
 
-        Debug.Log($"✨ Current Slaytion: {slaytion}");
+        Debug.Log($" Current Slaytion: {slaytion}");
         for (int i = 0; i < currentNode.edges.Count; i++)
         {
             Debug.Log($"{i + 1}: {currentNode.edges[i].choiceText}");
